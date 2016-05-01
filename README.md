@@ -16,5 +16,7 @@ second.
 I'm impressed at the one second time.  I wonder how much work it's
 (re)doing.  When I get a chance I'll do an strace.
 
+### Now for nix on top of Docker:
+
 
 
