@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p bash -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz
+#! nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz -i bash -p bashInteractive
 
 # First test:
 # nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-14.12.tar.gz

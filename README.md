@@ -84,6 +84,34 @@ zlib.  Ok, two I expected from having to install gnutar before
 installing the 16.03 tarball.  But the idea was that the
 strace/bashInteractive install and the hello_world script are supposed
 to both be using the exact same 16.03 nixpkgs snapshot.  That SHOULD
-include the same version of zlib-1.2.8!
+include the same version of zlib-1.2.8!  Ditto for coreutils, etc.
 
-Ditto for coreutils, etc.
+If I delete old generations and gargage collect, plus mush all the
+commands in the Dockerfile into one RUN/layer... then it successfully
+frees 344MB at the end.  That's much better.
+
+Ah, darn, but then because it deleted so much garbage.  The first time
+we run the script it refetches the 16.03.tar.gz.  And worse than that
+we reinstall a bunch of stuff.  That brings us back up to 900MB /nix
+and these packages reported by `nix-env -q`:
+
+    bash-interactive-4.3-p42
+    gnutar-1.28
+    nix-1.10
+    nss-cacert-3.20
+    strace-4.10
+
+I did look at the strace.  It includes 200 opens.  Virtually all under
+`/nix/store/<pkg-hash>`.  I don't see where/how it does the caching.
+
+BEFORE that script ran, the /nix/store was 546MB.  It has two zlibs
+instead of three.  But, weirdly, the `nix-env -q` reports EXACTLY the
+same packages as listed above, after the script ran.  What gives?  If
+it's the same nixpkg set, and its the same packages/versions, then why
+the extra reinstalls and >300MB?
+
+    bash-interactive-4.3-p42
+    gnutar-1.28
+    nix-1.10
+    nss-cacert-3.20
+    strace-4.10

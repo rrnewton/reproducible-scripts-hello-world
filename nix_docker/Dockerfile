@@ -4,7 +4,7 @@
 # Option (2): 
 FROM nixos/nix:1.10
 # Bootstrapping problem: need a good Tar:
-RUN nix-env -iA nixpkgs.gnutar 
+# RUN nix-env -iA nixpkgs.gnutar 
 
 # Nix-channel: should be optional:
 ## RUN nix-channel --add http://nixos.org/releases/nixpkgs/nixpkgs-15.06pre63766.8e56452/ dev
@@ -14,7 +14,7 @@ RUN nix-env -iA nixpkgs.gnutar
 
 # Install packages:
 # DELICATE: the goal here is to use the exact same nixpkgs as the script below uses.
-RUN nix-env -iA nixpkgs.strace nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz
+# RUN nix-env -iA nixpkgs.strace nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz
 
 # Woo, Docker CACHING should actually be safe in this context.
 # RUN nix-env -iA nixpkgs.stdenv
@@ -26,4 +26,13 @@ ADD ./nix /scripts
 
 # Prime the pump by running the script once and installing any dependencies:
 # We don't have /usr/bin/env here, so use nix-shell explicitly.
-RUN time nix-shell /scripts/hello_nix_reproducible.sh
+RUN nix-env -iA nixpkgs.gnutar && \
+    nix-env -iA nixpkgs.strace nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz && \
+    time nix-shell /scripts/hello_nix_reproducible.sh && \
+    nix-env --delete-generations old && \
+    nix-collect-garbage
+
+# Surprisingly, this errors:
+# nix-collect-garbage -d
+#   error: getting status of ‘/nix/var/nix/profiles/default-1-link’: No such file or directory
+
