@@ -21,5 +21,10 @@ I'm impressed at the one second time.  I wonder how much work it's
 The hello_nix_reproducible.sh script takes as little as 218ms to rerun
 on my workstation, running inside a docker image.  (See ./nix_docker/)
 
+Now I've got a version of nix going where docker and the reproducible
+script both use release 16.03 of nixpkgs.  This seems great but the
+docker image has blown up to 837MB.
+
+
 
 

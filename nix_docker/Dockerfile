@@ -14,7 +14,7 @@ RUN nix-env -iA nixpkgs.gnutar
 
 # Install packages:
 # DELICATE: the goal here is to use the exact same nixpkgs as the script below uses.
-RUN nix-env -iA nixpkgs.strace nixpkgs.bashInteractive nixpkgs.gnutar -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz
+RUN nix-env -iA nixpkgs.strace nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz
 
 # Woo, Docker CACHING should actually be safe in this context.
 # RUN nix-env -iA nixpkgs.stdenv
@@ -24,4 +24,6 @@ RUN nix-env -iA nixpkgs.strace nixpkgs.bashInteractive nixpkgs.gnutar -I nixpkgs
 # (UGH, see https://github.com/docker/docker/issues/2745 about this arbitrary limitation.)
 ADD ./nix /scripts
 
-# RUN time /scripts/hello_nix_reproducible.sh
+# Prime the pump by running the script once and installing any dependencies:
+# We don't have /usr/bin/env here, so use nix-shell explicitly.
+RUN time nix-shell /scripts/hello_nix_reproducible.sh
