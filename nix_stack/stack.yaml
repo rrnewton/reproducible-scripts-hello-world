@@ -38,3 +38,5 @@ nix:
   enable: true
   packages: [bashInteractive]
   path: ["nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz"]
+
+# nixpkgs=http://nixos.org/releases/nixpkgs/nixpkgs-16.09pre82345.3994a23/nixexprs.tar.xz

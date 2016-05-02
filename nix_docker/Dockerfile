@@ -14,10 +14,19 @@ FROM nixos/nix:1.10
 
 # Install packages:
 # DELICATE: the goal here is to use the exact same nixpkgs as the script below uses.
-# RUN nix-env -iA nixpkgs.strace nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz
+RUN nix-env -iA nixpkgs.gnutar && \
+    nix-env -iA nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz && \
+    nix-shell -q && du -sch /* 
 
-# Woo, Docker CACHING should actually be safe in this context.
-# RUN nix-env -iA nixpkgs.stdenv
+# Problems with this:
+RUN echo 'echo hello' | nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz -p bashInteractive 
+
+#    nix-env -iA nixpkgs.strace nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz && \
+#    nix-env --delete-generations old && \
+#    nix-collect-garbage && du -sch /*
+## Surprisingly, this errors:
+## nix-collect-garbage -d
+##   error: getting status of ‘/nix/var/nix/profiles/default-1-link’: No such file or directory
 
 
 # This must be run from the root of the repo
@@ -26,13 +35,6 @@ ADD ./nix /scripts
 
 # Prime the pump by running the script once and installing any dependencies:
 # We don't have /usr/bin/env here, so use nix-shell explicitly.
-RUN nix-env -iA nixpkgs.gnutar && \
-    nix-env -iA nixpkgs.strace nixpkgs.bashInteractive -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/16.03.tar.gz && \
+RUN nix-env -q && du -sch /* && \
     time nix-shell /scripts/hello_nix_reproducible.sh && \
-    nix-env --delete-generations old && \
-    nix-collect-garbage
-
-# Surprisingly, this errors:
-# nix-collect-garbage -d
-#   error: getting status of ‘/nix/var/nix/profiles/default-1-link’: No such file or directory
-
+    nix-env -q && du -sch /*

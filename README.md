@@ -115,3 +115,8 @@ the extra reinstalls and >300MB?
     nix-1.10
     nss-cacert-3.20
     strace-4.10
+
+Maybe this problem has to do with the difference between "-p bash" and
+"-p bashInteractive"?
+
+
